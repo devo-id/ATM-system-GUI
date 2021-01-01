@@ -49,14 +49,12 @@ root.resizable(0,0)
 
 global account_userName 
 account_userName = StringVar()
-global time_now
-time_now = datetime.datetime.now().strftime("%Y/%m/%d %H-%M-%S")
-
 # #Functions############
 def transaction_init():
     global account_userName
     username = account_userName.get()
     acBal = 0
+    time_now = datetime.datetime.now().strftime("%Y/%m/%d %H-%M-%S")
     transactions = f"{time_now}: 0 Account Created|"
     con = sqlite3.connect("ATMdatabase.db")
     cur = con.cursor()
@@ -144,6 +142,7 @@ def mini_statement():
     mini_state = f"Mini Statement of {username}:\n"
     for item in transaction_list:
         mini_state+=item +"\n"
+    time_now = datetime.datetime.now().strftime("%Y/%m/%d %H-%M-%S")
     mini_state +=f"Clear Balance Rs.{get_balance(username)}-as on {time_now}" 
     tkinter.messagebox.showinfo(title="Mini Statement",message=mini_state)
    
@@ -164,6 +163,7 @@ def cash_depo():
         cur.execute("UPDATE transaction_data set account_balance = ?  WHERE username=?",(updated_bal,username))
 
         ##Create Transaction Detail###################
+        time_now = datetime.datetime.now().strftime("%Y/%m/%d %H-%M-%S")
         current_transaction = f"{time_now}: {amount_to_add} Cr|"
         cur.execute("SELECT transactions FROM transaction_data WHERE username = ?",(username,))
         past_transaction = cur.fetchone() #fetching old transactions
@@ -194,6 +194,7 @@ def cach_withdrawl():
             updated_bal = cur_bal - amount_to_withdrawl
             cur.execute("UPDATE transaction_data set account_balance = ?  WHERE username=?",(updated_bal,username))
             ##Create Transaction Detail###################
+            time_now = datetime.datetime.now().strftime("%Y/%m/%d %H-%M-%S")
             current_transaction = f"{time_now}: {amount_to_withdrawl} Dr|"
             cur.execute("SELECT transactions FROM transaction_data WHERE username = ?",(username,))
             past_transaction = cur.fetchone() #fetching old transactions
@@ -234,6 +235,7 @@ def transfer():
                     cur.execute("UPDATE transaction_data set account_balance = ?  WHERE username=?",(receiver_updated_amount,receiver_username))
                     ##########################################################
                     ##Sender Transaction Detail###################
+                    time_now = datetime.datetime.now().strftime("%Y/%m/%d %H-%M-%S")
                     sender_current_transaction = f"{time_now}: {sending_amount} Dr Transferred To {receiver_username}|"
                     cur.execute("SELECT transactions FROM transaction_data WHERE username = ?",(SenderUserName,))
                     sender_past_transaction = cur.fetchone() #fetching old transactions
