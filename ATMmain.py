@@ -297,79 +297,77 @@ def registration_data(en1,en2,en3,en4,en5,en6,en7,en8):
     global account_userName
     pin = random.randint(1111,9999)
     name = en1.get()
-    
-    try:
-        if en2.get() == 1:
-            gender = "Male"
-        elif gender == 2:
-            gender = "Female"
-        else :
-            gender = "Others"
-    except UnboundLocalError:
-        tkinter.messagebox.showerror(title="Error",message="Something is Wrong")
 
+    gender = en2.get()
+    if gender == 1:
+        gender = "Male"
+    elif gender == 2:
+        gender = "Female"
+    else :
+        gender = "Others"
 
     age = en3.get()
-    try: 
-        age = int(age)
-        if age<10:
-            tkinter.messagebox.showerror(title="Error",message=f"You are Underage! Wait for {10-age} years.")
-            return
-    except ValueError:
-        tkinter.messagebox.showerror(title="Error",message="Age is invalid")
-
     dob = en4.get()
-
     cNo = en5.get()
-    if len(cNo)==10:
-        try:
-            cNo = int(cNo)
-        except ValueError:
-            tkinter.messagebox.showerror(title="Error",message="Mobile Number is invalid")
-    else:
-        tkinter.messagebox.showerror(title="Error",message="Mobile Number is invalid")
-
     AdharNo = en6.get()
-    if len(AdharNo)==12:
-        try:
-            cNo = int(cNo)
-        except ValueError:
-            tkinter.messagebox.showerror(title="Error",message="Aadhar Number is invalid")
-            return
-    else:
-        tkinter.messagebox.showerror(title="Error",message="Aadhar Number is invalid")
-        return
-    
     Username = en7.get()
-    if check_user_exist(Username)==1:
-        tkinter.messagebox.showerror(title="Error",message="Username is already Exist. Try New!")
-        return
-
     acNo = en8.get()
-    if check_acNo_exist(acNo)==1:
-        tkinter.messagebox.showerror(title="Error",message="Account Number already Exist. Try New!")
-        return
-
 
     if "" in (name,gender,age,dob,cNo,AdharNo,Username,acNo):
         tkinter.messagebox.showerror(title="error",message="Missing Fields")
     else:
-        account_userName.set(Username)
-        # Database
-        con = sqlite3.connect("ATMdatabase.db")
-        cur = con.cursor()
-        try:
-            cur.execute("INSERT INTO Registration_data VALUES (?,?,?,?,?,?,?,?,?)",(name,gender,age,dob,cNo,AdharNo,Username,acNo,pin))
-            #allready Created Table, data Added
-        except sqlite3.OperationalError:
-            #Not created!! Now Creating
-            create_registration_table()
-            cur.execute("INSERT INTO Registration_data VALUES (?,?,?,?,?,?,?,?,?)",(name,gender,age,dob,cNo,AdharNo,Username,acNo,pin))
-        con.commit()
-        con.close()
-        tkinter.messagebox.showinfo(title="Successful",message=f"Account has been created. You PIN is {pin}")
-        transaction_init()
-        Home()
+        try: 
+            age = int(age)
+            if age<10:
+                tkinter.messagebox.showerror(title="Error",message=f"You are Underage! Wait for {10-age} years.")
+                return
+            else:
+                if len(cNo)==10:
+                    try:
+                        cNo = int(cNo)
+                    except ValueError:
+                        tkinter.messagebox.showerror(title="Error",message="Mobile Number is invalid")
+                    
+                    if len(AdharNo)==12:
+                        try:
+                            cNo = int(cNo)
+                        except ValueError:
+                            tkinter.messagebox.showerror(title="Error",message="Aadhar Number is invalid")
+                            return
+
+                        if check_user_exist(Username)==1:
+                            tkinter.messagebox.showerror(title="Error",message="Username is already Exist. Try New!")
+                            return
+                        if check_acNo_exist(acNo)==1:
+                            tkinter.messagebox.showerror(title="Error",message="Account Number already Exist. Try New!")
+                            return
+                        
+                        else:
+                            account_userName.set(Username)
+                            # Database
+                            con = sqlite3.connect("ATMdatabase.db")
+                            cur = con.cursor()
+                            try:
+                                cur.execute("INSERT INTO Registration_data VALUES (?,?,?,?,?,?,?,?,?)",(name,gender,age,dob,cNo,AdharNo,Username,acNo,pin))
+                                #allready Created Table, data Added
+                            except sqlite3.OperationalError:
+                                #Not created!! Now Creating
+                                create_registration_table()
+                                cur.execute("INSERT INTO Registration_data VALUES (?,?,?,?,?,?,?,?,?)",(name,gender,age,dob,cNo,AdharNo,Username,acNo,pin))
+                            con.commit()
+                            con.close()
+                            tkinter.messagebox.showinfo(title="Successful",message=f"Account has been created. You PIN is {pin}")
+                            transaction_init()
+                            Home()
+
+                    else:
+                        tkinter.messagebox.showerror(title="Error",message="Aadhar Number is invalid")
+                        return
+                else:
+                    tkinter.messagebox.showerror(title="Error",message="Mobile Number is invalid")
+
+        except ValueError:
+            tkinter.messagebox.showerror(title="Error",message="Age is invalid")
 
 def RegistrationWindow():
     varGen = IntVar() #Gender Variable
